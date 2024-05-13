@@ -12,9 +12,18 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 
-export default async function Component() {
+export default async function Component({
+  searchParams,
+}: {
+  searchParams?: { search?: string };
+}) {
   const response = await axios.get(
-    "https://apis.codante.io/api/orders-api/orders"
+    "https://apis.codante.io/api/orders-api/orders",
+    {
+      params: {
+        search: searchParams?.search,
+      },
+    }
   );
 
   const orders = response.data.data;
@@ -35,7 +44,7 @@ export default async function Component() {
           </div>
         </CardHeader>
         <CardContent>
-          <OrdersTable orders={orders}/>
+          <OrdersTable orders={orders} />
           <div className="mt-8">
             <Pagination />
           </div>
