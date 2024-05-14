@@ -17,6 +17,7 @@ type ComponentProps = {
     search?: string;
     status?: string;
     sort: string;
+    page: number;
   };
 };
 
@@ -28,11 +29,15 @@ export default async function Component({ searchParams }: ComponentProps) {
         search: searchParams?.search,
         status: searchParams?.status,
         sort: searchParams?.sort,
+        page: searchParams?.page,
       },
     }
   );
 
   const orders = response.data.data;
+  let links: { url: string; label: string; active: boolean }[] =
+    response.data.meta.links;
+  links = links.map((link, index) => ({ ...link, id: index }));
 
   console.log(orders);
 
@@ -52,7 +57,7 @@ export default async function Component({ searchParams }: ComponentProps) {
         <CardContent>
           <OrdersTable orders={orders} />
           <div className="mt-8">
-            <Pagination />
+            <Pagination links={links} />
           </div>
         </CardContent>
       </Card>
