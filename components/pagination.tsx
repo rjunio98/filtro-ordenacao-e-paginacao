@@ -18,18 +18,23 @@ type PaginationProps = {
     active: boolean;
     id: number;
   }[];
+  lastPage: number;
 };
 
-export default function Pagination({ links }: PaginationProps) {
+export default function Pagination({ links, lastPage }: PaginationProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  function handleClickPage(page: number) {
+  function handleClickPage(pageNumber: number) {
     const params = new URLSearchParams(searchParams);
 
-    if (page > 1) {
-      params.set("page", page.toString());
+    if (pageNumber > 1) {
+      if (pageNumber > lastPage) {
+        params.set("page", lastPage.toString());
+      } else {
+        params.set("page", pageNumber.toString());
+      }
     } else {
       params.delete("page");
     }
@@ -40,7 +45,16 @@ export default function Pagination({ links }: PaginationProps) {
   return (
     <PaginationComponent>
       <PaginationContent>
-        <PaginationItem>
+        <PaginationItem
+          className={`${
+            links[0].url
+              ? "cursor-pointer"
+              : "cursor-auto text-slate-300 hover:text-slate-300"
+          }`}
+          onClick={() =>
+            handleClickPage(Number(searchParams.get("page") || 1) - 1)
+          }
+        >
           <PaginationPrevious />
         </PaginationItem>
 
@@ -73,7 +87,16 @@ export default function Pagination({ links }: PaginationProps) {
             </PaginationItem>
           );
         })}
-        <PaginationItem>
+        <PaginationItem
+          className={`${
+            links[links.length - 1].url
+              ? "cursor-pointer"
+              : "cursor-auto text-slate-300 hover:text-slate-300"
+          }`}
+          onClick={() =>
+            handleClickPage(Number(searchParams.get("page") || 1) + 1)
+          }
+        >
           <PaginationNext />
         </PaginationItem>
 

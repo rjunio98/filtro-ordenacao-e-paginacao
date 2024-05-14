@@ -35,7 +35,8 @@ export default async function Component({ searchParams }: ComponentProps) {
   );
 
   const orders = response.data.data;
-  let links: { url: string; label: string; active: boolean }[] =
+  const lastPage = response.data.meta.last_page;
+  let links: { url: string; label: string; active: boolean; id: number }[] =
     response.data.meta.links;
   links = links.map((link, index) => ({ ...link, id: index }));
 
@@ -57,7 +58,10 @@ export default async function Component({ searchParams }: ComponentProps) {
         <CardContent>
           <OrdersTable orders={orders} />
           <div className="mt-8">
-            <Pagination links={links} />
+            <Pagination
+              links={links}
+              lastPage={lastPage}
+            />
           </div>
         </CardContent>
       </Card>
